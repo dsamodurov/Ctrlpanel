@@ -10,16 +10,6 @@ class StoreController extends Controller
     /** Display a listing of the resource. */
     public function index()
     {
-        $isPaymentSetup = false;
-
-        if (
-            env('APP_ENV') == 'local' ||
-            config('SETTINGS::PAYMENTS:PAYPAL:SECRET') && config('SETTINGS::PAYMENTS:PAYPAL:CLIENT_ID') ||
-            config('SETTINGS::PAYMENTS:STRIPE:SECRET') && config('SETTINGS::PAYMENTS:STRIPE:ENDPOINT_SECRET') && config('SETTINGS::PAYMENTS:STRIPE:METHODS')
-        ) {
-            $isPaymentSetup = true;
-        }
-
         //Required Verification for creating an server
         if (config('SETTINGS::USER:FORCE_EMAIL_VERIFICATION', false) === 'true' && ! Auth::user()->hasVerifiedEmail()) {
             return redirect()->route('profile.index')->with('error', __('You are required to verify your email address before you can purchase credits.'));
@@ -32,7 +22,7 @@ class StoreController extends Controller
 
         return view('store.index')->with([
             'products' => ShopProduct::where('disabled', '=', false)->orderBy('type', 'asc')->orderBy('price', 'asc')->get(),
-            'isPaymentSetup' => $isPaymentSetup,
+            'isPaymentSetup' => true,
         ]);
     }
 }
