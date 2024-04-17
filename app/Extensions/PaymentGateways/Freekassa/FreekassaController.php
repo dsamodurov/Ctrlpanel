@@ -50,8 +50,10 @@ class FreekassaController {
 
     function checkStatus(Request $request): void
     {
-        if (!in_array($this->getIP(), self::IPS))
+        if (!in_array($this->getIP(), self::IPS)) {
+            Log::error('IP not Freekassa', [$this->getIP(), $request->ip()]);
             Redirect::route('home')->with('info', 'hacking attempt!')->send();
+        }
 
         $sign = md5(implode(':', [
             $this->merchantId(),
@@ -60,15 +62,14 @@ class FreekassaController {
             $request->get('MERCHANT_ORDER_ID'),
         ]));
 
-        if ($sign !== $request->get('SIGN'))
+        if ($sign !== $request->get('SIGN')) {
+            Log::error('Sign fail', $request->toArray());
             Redirect::route('home')->with('info', 'hacking attempt!')->send();
+        }
     }
 
     function success(Request $request): void
     {
-        $user = Auth::user();
-
-        Log::info('Freekassa success USER', [$user->id ?? null]);
         Log::info('Freekassa success', $request->toArray());
 
         $this->checkStatus($request);
