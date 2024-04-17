@@ -5,12 +5,9 @@ use App\Events\UserUpdateCreditsEvent;
 use App\Models\PartnerDiscount;
 use App\Models\Payment;
 use App\Models\ShopProduct;
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
-
 
 
 class FreekassaController {
@@ -135,4 +132,3 @@ class FreekassaController {
         ]));
     }
 }
-
