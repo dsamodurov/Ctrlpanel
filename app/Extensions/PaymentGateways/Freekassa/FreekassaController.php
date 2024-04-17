@@ -72,7 +72,7 @@ class FreekassaController {
     {
         Log::info('Freekassa success', $request->toArray());
 
-        $this->checkStatus($request);
+//        $this->checkStatus($request);
 
         $payment = Payment::findOrFail($request->get('MERCHANT_ORDER_ID'));
         $shopProduct = ShopProduct::findOrFail($payment->shop_item_product_id);
@@ -91,7 +91,7 @@ class FreekassaController {
     {
         Log::info('Freekassa fail', $request->toArray());
 
-        $this->checkStatus($request);
+//        $this->checkStatus($request);
 
         $payment = Payment::findOrFail($request->get('MERCHANT_ORDER_ID'));
         $shopProduct = ShopProduct::findOrFail($payment->shop_item_product_id);
