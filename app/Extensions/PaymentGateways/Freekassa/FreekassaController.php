@@ -117,13 +117,6 @@ class FreekassaController {
 
     private function sign(Payment $payment): string
     {
-        Log::info('Freekassa sign', [
-            $this->merchantId(),
-            $payment->total_price,
-            $this->secretWord(),
-            $payment->currency_code,
-            $payment->id,
-        ]);
         return md5(implode(':', [
             $this->merchantId(),
             $payment->total_price,
