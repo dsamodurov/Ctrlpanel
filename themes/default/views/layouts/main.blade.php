@@ -230,19 +230,13 @@
                             </a>
                         </li>
 
-                        @if (env('APP_ENV') == 'local' ||
-                            (config('SETTINGS::PAYMENTS:PAYPAL:SECRET') && config('SETTINGS::PAYMENTS:PAYPAL:CLIENT_ID')) ||
-                            (config('SETTINGS::PAYMENTS:STRIPE:SECRET') &&
-                                config('SETTINGS::PAYMENTS:STRIPE:ENDPOINT_SECRET') &&
-                                config('SETTINGS::PAYMENTS:STRIPE:METHODS')))
-                            <li class="nav-item">
-                                <a href="{{ route('store.index') }}"
-                                    class="nav-link @if (Request::routeIs('store.*') || Request::routeIs('checkout')) active @endif">
-                                    <i class="nav-icon fa fa-coins"></i>
-                                    <p>{{ __('Store') }}</p>
-                                </a>
-                            </li>
-                        @endif
+                        <li class="nav-item">
+                            <a href="{{ route('store.index') }}"
+                                class="nav-link @if (Request::routeIs('store.*') || Request::routeIs('checkout')) active @endif">
+                                <i class="nav-icon fa fa-coins"></i>
+                                <p>{{ __('Store') }}</p>
+                            </a>
+                        </li>
                         @if (config('SETTINGS::TICKET:ENABLED'))
                             <li class="nav-item">
                                 <a href="{{ route('ticket.index') }}"
