@@ -36,7 +36,7 @@ class FreekassaController {
         ]);
 
         // формируем адрес
-        $url = self::URL . sprintf('?m=%s&oa=%d&currency=%s&o=%s&s=%s&em=%s', urlencode($this->merchantId()), $payment->total_price, $payment->currency_code, urlencode($payment->id), urlencode($this->sign($payment)), urlencode($user->email));
+        $url = self::URL . sprintf('?m=%s&oa=%s&currency=%s&o=%s&s=%s&em=%s', urlencode($this->merchantId()), $payment->total_price, $payment->currency_code, urlencode($payment->id), urlencode($this->sign($payment)), urlencode($user->email));
 
         // отправляем на оплату
         Redirect::to($url)->send();
