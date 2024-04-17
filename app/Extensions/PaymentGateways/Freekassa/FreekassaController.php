@@ -6,6 +6,7 @@ use App\Models\PartnerDiscount;
 use App\Models\Payment;
 use App\Models\ShopProduct;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
 
@@ -65,6 +66,9 @@ class FreekassaController {
 
     function success(Request $request): void
     {
+        $user = Auth::user();
+
+        Log::info('Freekassa success USER', [$user->id ?? null]);
         Log::info('Freekassa success', $request->toArray());
 
         $this->checkStatus($request);
