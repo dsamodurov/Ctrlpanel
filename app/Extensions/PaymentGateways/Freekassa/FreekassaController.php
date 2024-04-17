@@ -35,17 +35,11 @@ class FreekassaController {
             'shop_item_product_id' => $shopProduct->id,
         ]);
 
+        // формируем адрес
+        $url = rtrim(self::URL, '/').sprintf('?m=%s&oa%d&currency=%s&o=%s&s=%s&em=%s', urlencode($this->merchantId()), $payment->total_price, $payment->currency_code, urlencode($payment->id), urlencode($this->sign($payment)), urlencode($user->email));
 
         // отправляем на оплату
-        Redirect::to(self::URL)
-            ->withInput([
-                'm' => $this->merchantId(), // id магазина
-                'oa' => $payment->total_price, // сумма
-                'currency' => $payment->currency_code, // валюта платежа
-                'o' => $payment->id, // номер заказа
-                's' => $this->sign($payment),
-                'em' => $user->email,
-            ])->send();
+        Redirect::to($url)->send();
     }
 
     function getIP() {
