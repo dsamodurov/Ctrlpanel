@@ -64,9 +64,13 @@ Route::get('/tos', function () {
 Route::middleware(['auth', 'checkSuspended'])->group(function () {
     //resend verification email
     Route::get('/email/verification-notification', function (Request $request) {
-        $request->user()->sendEmailVerificationNotification();
+        if($request->session()->has('emailVerifyNotification') && now()->diffInSeconds($request->session()->get('emailVerifyNotification')) < 180)
+            return back()->with('error', __('Link resend timeout :time sec', [
+                'time' => now()->diffInSeconds($request->session()->get('emailVerifyNotification'))]));
 
-        return back()->with('success', 'Verification link sent!');
+        $request->user()->sendEmailVerificationNotification();
+        $request->session()->put('emailVerifyNotification', now());
+        return back()->with('success', __('Verification link sent!'));
     })->middleware(['auth', 'throttle:3,1'])->name('verification.send');
 
     //normal routes
