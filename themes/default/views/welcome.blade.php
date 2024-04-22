@@ -53,7 +53,7 @@
                 <img src="{{ asset('images/game/terraria.webp') }}" class="card-img-top rounded-top" alt="Terraria">
                 <div class="card-body row align-items-start">
                     <p class="card-text pt-2 mb-0">Цена от 0.14 ₽/час</p>
-                    <a href="#" class="btn btn-outline-success ml-auto">Заказать сервер</a>
+                    <a href="{{ route('servers.index') }}" class="btn btn-outline-success ml-auto">Заказать сервер</a>
                 </div>
             </div>
         </div>
