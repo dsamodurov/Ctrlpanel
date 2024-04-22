@@ -49,6 +49,7 @@
 
     <div class="container my-4 py-4">
         <div class="row">
+
             <div class="card col-sm-6 px-0">
                 <img src="{{ asset('images/game/terraria.webp') }}" class="card-img-top rounded-top" alt="Terraria">
                 <div class="card-body row align-items-start">
@@ -56,6 +57,15 @@
                     <a href="{{ route('servers.index') }}" class="btn btn-outline-success ml-auto">Заказать сервер</a>
                 </div>
             </div>
+
+            <div class="card col-sm-6 px-0">
+                <img src="{{ asset('images/game/cs2.webp') }}" class="card-img-top rounded-top" alt="Counter-Strike 2">
+                <div class="card-body row align-items-start">
+                    <p class="card-text pt-2 mb-0">Цена от 0.35 ₽/час</p>
+                    <a href="{{ route('servers.index') }}" class="btn btn-outline-success ml-auto">Заказать сервер</a>
+                </div>
+            </div>
+
         </div>
     </div>
 
