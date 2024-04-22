@@ -63,7 +63,7 @@
                                 data-content="{{__('please make the best of it')}}"
                                 class="fas fa-info-circle"></i></h5>
                                 -->
-
+                            </h5>
                         </div>
                         <div class="card-body">
                             <p>{{__("Can't start your server? Need an additional port? Do you have any other questions? Let us know by opening a ticket.")}}</p>
@@ -94,7 +94,7 @@
                     {data: 'updated_at', type: 'num', render: {_: 'display', sort: 'raw'}},
                     {data: 'actions', sortable: false},
                 ],
-                fnDrawCallback: function( oSettings ) {
+                fnDrawCallback: function() {
                     $('[data-toggle="popover"]').popover();
                 }
             });
