@@ -7,7 +7,7 @@
 
             @auth
                 <div class="form-inline my-2 my-lg-0">
-                    <a class="btn btn-outline-primary mr-sm-2" href="{{ route('profile') }}">{{ __('Profile') }}</a>
+                    <a class="btn btn-outline-primary mr-sm-2" href="{{ route('home') }}">{{ __('Profile') }}</a>
                     <form method="post" action="{{ route('logout') }}">
                         @csrf
                         <button class="btn btn-primary my-2 my-sm-0" type="submit">
