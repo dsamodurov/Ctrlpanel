@@ -66,8 +66,7 @@
 
                         </div>
                         <div class="card-body">
-                            <p>{{__("Can't start your server? Need an additional port? Do you have any other questions? Let us know by
-                                opening a ticket.")}}</p>
+                            <p>{{__("Can't start your server? Need an additional port? Do you have any other questions? Let us know by opening a ticket.")}}</p>
 
                         </div>
                     </div>
