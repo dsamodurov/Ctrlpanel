@@ -45,8 +45,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('guest')->get('/', function () {
-    return redirect('login');
+//Route::middleware('guest')->get('/', function () {
+//    return redirect('login');
+//})->name('welcome');
+Route::get('/', function () {
+//    dd(view('welcome'));
+    return view('welcome');
 })->name('welcome');
 
 Auth::routes(['verify' => true]);
