@@ -18,15 +18,23 @@ class FreekassaController {
 
     private function request(string $method, array $data = []): ?array
     {
-        if(!env('FREEKASSA_API_KEY'))
-            Log::error('Set FREEKASSA_API_KEY in .env');
+        if(!env('FREEKASSA_SHOP_ID')) {
+            Log::error('Set FREEKASSA_SHOP_ID in .env');
+            return null;
+        } else {
+            $data['shopId'] = env('FREEKASSA_SHOP_ID');
+            $data['nonce'] = time();
+        }
 
-        $data['shopId'] = env('FREEKASSA_SHOP_ID');
-        $data['nonce'] = time();
 
         ksort($data);
-        $sign = hash_hmac('sha256', implode('|', $data), env('FREEKASSA_API_KEY'));
-        $data['signature'] = $sign;
+        if(!env('FREEKASSA_API_KEY')) {
+            Log::error('Set FREEKASSA_API_KEY in .env');
+            return null;
+        } else {
+            $sign = hash_hmac('sha256', implode('|', $data), env('FREEKASSA_API_KEY'));
+            $data['signature'] = $sign;
+        }
 
         try {
             $res = Http::timeout(10)
