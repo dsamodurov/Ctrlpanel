@@ -80,11 +80,14 @@ class FreekassaController {
             'currency' => $payment->currency_code
         ]);
 
-        $payment->payment_id = $response['orderId'];
-        $payment->save();
+        if(is_array($response) && $response['type'] === 'success') {
+            $payment->payment_id = $response['orderId'];
+            $payment->save();
 
-        // отправляем на оплату
-        Redirect::to($response['location'])->send();
+            Redirect::to($response['location'])->send();
+        } else {
+            Redirect::route('home')->with('info', 'Payment fail!')->send();
+        }
     }
 
     function success(Request $request): void
