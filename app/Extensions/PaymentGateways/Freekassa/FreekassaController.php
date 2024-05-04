@@ -5,16 +5,47 @@ use App\Events\UserUpdateCreditsEvent;
 use App\Models\PartnerDiscount;
 use App\Models\Payment;
 use App\Models\ShopProduct;
+use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Log;
 
 
 class FreekassaController {
 
-    const URL = 'https://pay.freekassa.ru/';
-    const IPS = ['168.119.157.136', '168.119.60.227',  '178.154.197.79', '51.250.54.238'];
+    const URL = 'https://api.freekassa.ru/v1/';
+
+    private function request(string $method, array $data = []): ?array
+    {
+        if(!env('FREEKASSA_API_KEY'))
+            Log::error('Set FREEKASSA_API_KEY in .env');
+
+        $data['shopId'] = env('FREEKASSA_SHOP_ID');
+        $data['nonce'] = time();
+
+        ksort($data);
+        $sign = hash_hmac('sha256', implode('|', $data), env('FREEKASSA_API_KEY'));
+        $data['signature'] = $sign;
+
+        try {
+            $res = Http::timeout(10)
+                ->post(self::URL.$method, $data);
+        } catch (Exception $err) {
+            Log::error('FreekassaController:request '.$err->getMessage());
+            return null;
+        }
+
+        if ($res->failed()) {
+            Log::error('FreekassaController:request HTTP '.$res->status(), $res->json());
+            return null;
+        } else {
+            Log::info('FreekassaController:request OK',
+                array_merge(compact('method', 'data'), ['response' => $res->json()]));
+            return $res->json();
+        }
+
+    }
     function payment(Request $request, string $shopProduct): void
     {
         $user = $request->user();
@@ -37,42 +68,28 @@ class FreekassaController {
         ]);
 
         // формируем адрес
-        $url = self::URL . sprintf('?m=%s&oa=%s&currency=%s&o=%s&s=%s&em=%s', urlencode($this->merchantId()), $payment->total_price, $payment->currency_code, urlencode($payment->id), urlencode($this->sign($payment)), urlencode($user->email));
+//        $url = self::URL . sprintf('?m=%s&oa=%s&currency=%s&o=%s&s=%s&em=%s', urlencode($this->merchantId()), $payment->total_price, $payment->currency_code, urlencode($payment->id), urlencode($this->sign($payment)), urlencode($user->email));
+       $this->request('currencies');
+
+        $response = $this->request('orders/create', [
+            'paymentId' => $payment->id,
+            //'i' => 6,
+            'email' => $user->email,
+            'ip' => $request->getClientIp(),
+            'amount' => $payment->total_price,
+            'currency' => $payment->currency_code
+        ]);
+
+        $payment->payment_id = $response['orderId'];
+        $payment->save();
 
         // отправляем на оплату
-        Redirect::to($url)->send();
-    }
-
-    function getIP() {
-        if(isset($_SERVER['HTTP_X_REAL_IP'])) return $_SERVER['HTTP_X_REAL_IP'];
-        return $_SERVER['REMOTE_ADDR'];
-    }
-
-    function checkStatus(Request $request): void
-    {
-        if (!in_array($this->getIP(), self::IPS)) {
-            Log::error('IP not Freekassa', [$this->getIP(), $request->ip()]);
-            Redirect::route('home')->with('info', 'hacking attempt!')->send();
-        }
-
-        $sign = md5(implode(':', [
-            $this->merchantId(),
-            $request->get('AMOUNT'),
-            $this->secretWord(),
-            $request->get('MERCHANT_ORDER_ID'),
-        ]));
-
-        if ($sign !== $request->get('SIGN')) {
-            Log::error('Sign fail', $request->toArray());
-            Redirect::route('home')->with('info', 'hacking attempt!')->send();
-        }
+        Redirect::to($response['location'])->send();
     }
 
     function success(Request $request): void
     {
         Log::info('Freekassa success', $request->toArray());
-
-//        $this->checkStatus($request);
 
         $payment = Payment::findOrFail($request->get('MERCHANT_ORDER_ID'));
         $shopProduct = ShopProduct::findOrFail($payment->shop_item_product_id);
@@ -90,8 +107,6 @@ class FreekassaController {
     function fail(Request $request): void
     {
         Log::info('Freekassa fail', $request->toArray());
-
-//        $this->checkStatus($request);
 
         $payment = Payment::findOrFail($request->get('MERCHANT_ORDER_ID'));
         $shopProduct = ShopProduct::findOrFail($payment->shop_item_product_id);
