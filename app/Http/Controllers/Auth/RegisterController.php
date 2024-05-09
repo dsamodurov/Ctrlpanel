@@ -91,10 +91,11 @@ class RegisterController extends Controller
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
+     * @param array $data
      * @return User
+     * @throws ValidationException
      */
-    protected function create(array $data)
+    protected function create(array $data): User
     {
         $user = User::create([
             'name' => $data['name'],
@@ -119,7 +120,7 @@ class RegisterController extends Controller
 
         if ($response->failed()) {
             $user->delete();
-            Log::error('Pterodactyl Registration Error: ' . $response->json()['errors'][0]['detail']);
+            Log::error('Pterodactyl Registration Error: ' . ($response->json()['errors'][0]['detail'] ?? $response->status()));
             throw ValidationException::withMessages([
                 'ptero_registration_error' => [__('Account already exists on Pterodactyl. Please contact the Support!')],
             ]);

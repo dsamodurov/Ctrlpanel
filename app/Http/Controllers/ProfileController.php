@@ -50,16 +50,17 @@ class ProfileController extends Controller
     }
 
     /** Update the specified resource in storage.
-     * @param  Request  $request
-     * @param  int  $id
+     * @param Request $request
+     * @param int $id
      * @return RedirectResponse
+     * @throws ValidationException
      */
-    public function update(Request $request, int $id)
+    public function update(Request $request, int $id): RedirectResponse
     {
         //prevent other users from editing a user
-        if ($id != Auth::user()->id) {
-            dd(401);
-        }
+        if ($id != Auth::user()->getAuthIdentifier())
+            abort(401);
+
         $user = User::findOrFail($id);
 
         //update password if necessary
