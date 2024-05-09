@@ -70,7 +70,7 @@
                     </form>
 
                     <p class="mt-3 mb-1">
-                        <a href="{{ route('login') }}">Login</a>
+                        <a href="{{ route('login') }}">{{ __('Login') }}</a>
                     </p>
                 </div>
                 <!-- /.login-card-body -->

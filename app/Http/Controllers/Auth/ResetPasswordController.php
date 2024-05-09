@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Classes\Pterodactyl;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class ResetPasswordController extends Controller
 {
@@ -27,4 +31,31 @@ class ResetPasswordController extends Controller
      * @var string
      */
     protected $redirectTo = RouteServiceProvider::HOME;
+
+    /**
+     * Set the user's password.
+     *
+     * @param User $user
+     * @param string $password
+     * @return void
+     * @throws ValidationException
+     */
+    protected function setUserPassword(User $user, $password): void
+    {
+        $user->password = Hash::make($password);
+
+        $response = Pterodactyl::client()->patch('/application/users/'.$user->pterodactyl_id, [
+            'password' => $password,
+            'username' => $user->name,
+            'first_name' => $user->name,
+            'last_name' => $user->name,
+            'email' => $user->email,
+
+        ]);
+        if ($response->failed()) {
+            throw ValidationException::withMessages([
+                'pterodactyl_error_message' => $response->toException()->getMessage(),
+            ]);
+        }
+    }
 }
