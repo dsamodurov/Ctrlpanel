@@ -432,7 +432,7 @@
         </div>
         <!-- /.content-wrapper -->
         <footer class="main-footer">
-            <strong>Copyright &copy; 2021-{{ date('Y') }} <a
+            <strong>Copyright &copy; @if(date('Y') > '2024')2024-@endif(){{ date('Y') }} <a
                     href="{{ url('/') }}">{{ env('APP_NAME', 'Laravel') }}</a>.</strong>
 
             {{-- Show imprint and privacy link --}}
