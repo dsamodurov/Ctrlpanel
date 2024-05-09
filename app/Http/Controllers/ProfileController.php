@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
@@ -79,6 +80,9 @@ class ProfileController extends Controller
                 'new_password' => 'required|string|min:8',
                 'new_password_confirmation' => 'required|same:new_password',
             ]);
+
+            $pterGet = Pterodactyl::client()->get('/application/users/'.$user->pterodactyl_id);
+            Log::info('pter user', compact('user', 'pterGet'));
 
             //Update Users Password on Pterodactyl
             //Username,Mail,First and Lastname are required aswell
